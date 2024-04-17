@@ -1,1 +1,1 @@
-# django-email-sletter
+# django-mailing-project
