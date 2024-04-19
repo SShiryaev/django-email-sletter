@@ -38,7 +38,10 @@
                     <div class="carousel-caption text-end text-warning text-shadow">
                         <h1>Сообщения для рассылок</h1>
                         <p>Вы можете создать, посмотреть список, отредактировать, удалить сообщения для рассылок.</p>
-                        <p><a class="btn btn-lg btn-outline-warning text-shadow" href="#">К сообщениям</a></p>
+                        <p><a class="btn btn-lg btn-outline-warning text-shadow" href="{% url 'mailing:message_list' %}"
+                        >
+                            К сообщениям
+                        </a></p>
                     </div>
                 </div>
             </div>
