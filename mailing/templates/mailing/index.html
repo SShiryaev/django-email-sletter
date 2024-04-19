@@ -16,7 +16,7 @@
                     <div class="carousel-caption text-start">
                         <h1>Менеджер рассылок</h1>
                         <p class="opacity-100">Вы можете создать, посмотреть список, отредактировать, удалить рассылку.</p>
-                        <p><a class="btn btn-lg btn-outline-light" href="{#% url 'dogs:dog_create' %#}">К рассылкам</a></p>
+                        <p><a class="btn btn-lg btn-outline-light" href="{% url 'mailing:mailing_list' %}">К рассылкам</a></p>
                     </div>
                 </div>
             </div>
@@ -51,13 +51,5 @@
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
-    </div>
-
-    <div class="container">
-        <div class="row">
-            {% for object in object_list %}
-                {% include 'mailing/includes/inc_mailing.html' %}
-            {% endfor %}
-        </div>
     </div>
 {% endblock %}

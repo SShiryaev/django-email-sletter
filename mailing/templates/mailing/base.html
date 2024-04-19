@@ -29,10 +29,10 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav me-auto mb-2 mb-md-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{#% url 'dogs:index' %#}">Главная</a>
+                        <a class="nav-link active" aria-current="page" href="{% url 'mailing:index' %}">Главная</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{#% url 'dogs:breed_list' %#}">Рассылки</a>
+                        <a class="nav-link" href="{% url 'mailing:mailing_list' %}">Рассылки</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{#% url 'dogs:dog_create' %#}">Клиенты</a>

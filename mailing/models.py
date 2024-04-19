@@ -12,7 +12,7 @@ class Client(models.Model):
     comment = models.TextField(max_length=500, **NULLABLE, verbose_name='комментарий')
 
     def __str__(self):
-        return f'{self.email} ({self.name})'
+        return self.name
 
     class Meta:
         verbose_name = 'клиент'
@@ -26,7 +26,7 @@ class Message(models.Model):
     body = models.TextField(max_length=500, verbose_name='содержание')
 
     def __str__(self):
-        return f'Сообщение по теме: {self.theme}'
+        return f'Сообщение по теме: {self.theme}\nТекст: {self.body}'
 
     class Meta:
         verbose_name = 'сообщение'
@@ -51,6 +51,7 @@ class Mailing(models.Model):
         ('completed', 'завершена')
     ]
 
+    name = models.CharField(max_length=50, verbose_name='название')
     send_at = models.DateTimeField(**NULLABLE, verbose_name='первая отправка')
     periodicity = models.CharField(max_length=10, choices=PERIODICITY_MAILING, verbose_name='периодичность')
     status = models.CharField(max_length=9, choices=STATUS_MAILING, verbose_name='статус')
@@ -58,7 +59,7 @@ class Mailing(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE, **NULLABLE, verbose_name='сообщение')
 
     def __str__(self):
-        return f'Рассылка со статусом: {self.status}, периодичность: {self.periodicity}'
+        return f'Рассылка с названием: {self.name}, получатель: {self.send_to}'
 
     class Meta:
         verbose_name = 'рассылка'

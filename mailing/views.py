@@ -1,5 +1,6 @@
-from django.views.generic import TemplateView, ListView
-from mailing.models import Mailing
+from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView
+from mailing.models import Mailing, Client
+from django.urls import reverse_lazy
 
 
 class IndexView(TemplateView):
@@ -17,3 +18,28 @@ class IndexView(TemplateView):
 
 class MailingListView(ListView):
     model = Mailing
+
+
+class MailingCreateView(CreateView):
+    model = Mailing
+    fields = ('name', 'send_to', 'send_at', 'periodicity', 'status', 'message',)
+    success_url = reverse_lazy('mailing:mailing_list')
+
+
+class MailingUpdateView(UpdateView):
+    model = Mailing
+    fields = ('name', 'send_to', 'send_at', 'periodicity', 'status', 'message',)
+    success_url = reverse_lazy('mailing:mailing_list')
+
+
+class MailingDetailView(DetailView):
+    model = Mailing
+
+
+class MailingDeleteView(DeleteView):
+    model = Mailing
+    success_url = reverse_lazy('mailing:mailing_list')
+
+
+class ClientListView(ListView):
+    model = Client
