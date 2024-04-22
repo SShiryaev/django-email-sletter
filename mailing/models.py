@@ -66,7 +66,7 @@ class Mailing(models.Model):
         verbose_name_plural = 'рассылки'
 
 
-class MailingStatus(models.Model):
+class MailingLog(models.Model):
     """Попытка рассылки. У одной рассылки может быть много попыток,
     но одна попытка относится только к одной конкретной рассылке.
     """
@@ -80,5 +80,5 @@ class MailingStatus(models.Model):
         return f'Статус: {self.mailing_status}, дата попытки: ({self.last_try})'
 
     class Meta:
-        verbose_name = 'статус рассылки'
-        verbose_name_plural = 'статусы рассылок'
+        verbose_name = 'лог рассылки'
+        verbose_name_plural = 'логи рассылок'

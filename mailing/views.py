@@ -1,5 +1,5 @@
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView
-from mailing.models import Mailing, Client, Message, MailingStatus
+from mailing.models import Mailing, Client, Message, MailingLog
 from django.urls import reverse_lazy
 
 
@@ -91,5 +91,5 @@ class MessageDeleteView(DeleteView):
     success_url = reverse_lazy('mailing:message_list')
 
 
-class MailingStatusDetailView(DetailView):
-    model = MailingStatus
+class MailingLogListView(ListView):
+    model = MailingLog
