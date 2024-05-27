@@ -1,5 +1,6 @@
 from django.db import models
 # from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 NULLABLE = {'blank': True, 'null': True}
 
@@ -34,27 +35,37 @@ class Message(models.Model):
 
 
 class Mailing(models.Model):
-    """Модель рассылки.
+    """
+    Модель рассылки.
     Рассылка внутри себя содержит ссылки на модели «Сообщение» и «Клиент сервиса».
     Сообщение у рассылки может быть только одно, а клиентов может быть много.
     """
 
-    PERIODICITY_MAILING = [
-        ('once_day', 'раз в день'),
-        ('once_week', 'раз в неделю'),
-        ('once_month', 'раз в месяц'),
-    ]
+    class Periodicity(models.TextChoices):
+        PER_A_DAY = "Раз в день", _("Раз в день")
+        PER_A_WEEK = "Раз в неделю", _("Раз в неделю")
+        PER_A_MONTH = "Раз в месяц", _("Раз в месяц")
 
-    STATUS_MAILING = [
-        ('created', 'создана'),
-        ('launched', 'запущена'),
-        ('completed', 'завершена')
-    ]
+    class Status(models.TextChoices):
+        CREATED = "Создана", _("Создана")
+        LAUNCHED = "Запущена", _("Запущена")
+        FINISHED = "Завершена", _("Завершена")
+    # PERIODICITY_MAILING = [
+    #     ('once_day', 'раз в день'),
+    #     ('once_week', 'раз в неделю'),
+    #     ('once_month', 'раз в месяц'),
+    # ]
+    #
+    # STATUS_MAILING = [
+    #     ('created', 'создана'),
+    #     ('launched', 'запущена'),
+    #     ('completed', 'завершена')
+    # ]
 
     name = models.CharField(max_length=50, verbose_name='название')
     send_at = models.DateTimeField(**NULLABLE, verbose_name='первая отправка')
-    periodicity = models.CharField(max_length=10, choices=PERIODICITY_MAILING, verbose_name='периодичность')
-    status = models.CharField(max_length=9, choices=STATUS_MAILING, verbose_name='статус')
+    periodicity = models.CharField(max_length=20, choices=Periodicity, verbose_name='периодичность')
+    status = models.CharField(max_length=20, choices=Status, verbose_name='статус')
     send_to = models.ManyToManyField(Client, verbose_name='получатель')
     message = models.ForeignKey(Message, on_delete=models.CASCADE, **NULLABLE, verbose_name='сообщение')
 
@@ -67,7 +78,8 @@ class Mailing(models.Model):
 
 
 class MailingLog(models.Model):
-    """Попытка рассылки. У одной рассылки может быть много попыток,
+    """
+    Попытка рассылки. У одной рассылки может быть много попыток,
     но одна попытка относится только к одной конкретной рассылке.
     """
 

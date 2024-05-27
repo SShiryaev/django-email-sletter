@@ -1,6 +1,7 @@
-from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView
-from mailing.models import Mailing, Client, Message, MailingLog
 from django.urls import reverse_lazy
+from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView
+
+from mailing.models import Mailing, Client, Message, MailingLog
 
 
 class IndexView(TemplateView):
