@@ -101,3 +101,37 @@ height: 100%
     margin-right: calc(-.5* var(--bs-gutter-x));
     margin-left: calc(-.5* var(--bs-gutter-x));
 }
+.bd-mode-toggle {
+  z-index: 1500;
+}
+
+.bd-mode-toggle .dropdown-menu .active .bi {
+  display: block !important;
+}
+.card-image {
+    height: 170px;
+    object-fit: contain;
+}
+
+.page-nav {
+    display:flex;
+    gap:8px;
+    flex-grow:1;
+}
+
+.action-right {
+    margin-left:auto;
+    display:flex;
+    gap:8px;
+}
+.page {
+    display:flex;
+    flex-direction:column;
+    height:100%;
+}
+.page-main {
+    flex-grow:1;
+}
+html {
+    height:100%;
+}

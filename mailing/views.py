@@ -1,5 +1,6 @@
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from mailing.models import Mailing, Client, Message, MailingLog
 
@@ -21,10 +22,23 @@ class MailingListView(ListView):
     model = Mailing
 
 
-class MailingCreateView(CreateView):
+class MailingCreateView(LoginRequiredMixin, CreateView):
+
+    login_url = "/users/login/"
+    redirect_field_name = "/users/login/"
+
     model = Mailing
     fields = ('name', 'send_to', 'send_at', 'periodicity', 'status', 'message',)
     success_url = reverse_lazy('mailing:mailing_list')
+
+    def form_valid(self, form):
+        # продукт присваивается создавшему его пользователю
+
+        mailing = form.save()
+        user = self.request.user
+        mailing.owner = user
+        mailing.save()
+        return super().form_valid(form)
 
 
 class MailingUpdateView(UpdateView):

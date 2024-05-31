@@ -1,6 +1,7 @@
 from django.db import models
 # from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from users.models import User
 
 NULLABLE = {'blank': True, 'null': True}
 
@@ -11,6 +12,8 @@ class Client(models.Model):
     email = models.EmailField(max_length=30, unique=True, verbose_name='почта')
     name = models.CharField(max_length=50, verbose_name='ФИО')
     comment = models.TextField(max_length=500, **NULLABLE, verbose_name='комментарий')
+
+    owner = models.ForeignKey(User, **NULLABLE, on_delete=models.SET_NULL, verbose_name='владелец')
 
     def __str__(self):
         return self.name
@@ -25,6 +28,8 @@ class Message(models.Model):
 
     theme = models.CharField(max_length=100, verbose_name='тема')
     body = models.TextField(max_length=500, verbose_name='содержание')
+
+    owner = models.ForeignKey(User, **NULLABLE, on_delete=models.SET_NULL, verbose_name='владелец')
 
     def __str__(self):
         return f'Сообщение по теме: {self.theme}\nТекст: {self.body}'
@@ -68,6 +73,8 @@ class Mailing(models.Model):
     status = models.CharField(max_length=20, choices=Status, verbose_name='статус')
     send_to = models.ManyToManyField(Client, verbose_name='получатель')
     message = models.ForeignKey(Message, on_delete=models.CASCADE, **NULLABLE, verbose_name='сообщение')
+
+    owner = models.ForeignKey(User, **NULLABLE, on_delete=models.SET_NULL, verbose_name='владелец')
 
     def __str__(self):
         return f'Рассылка с названием: {self.name}, получатель: {self.send_to}'
