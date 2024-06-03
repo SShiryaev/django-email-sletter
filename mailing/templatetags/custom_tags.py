@@ -11,5 +11,5 @@ def url_media(data):
 
 
 @register.filter()
-def is_moderator(user):
-    return user.groups.filter(name='moderator').exists()
+def is_manager(user):
+    return user.groups.filter(name='manager').exists()

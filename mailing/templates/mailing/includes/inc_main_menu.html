@@ -10,21 +10,47 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav me-auto mb-2 mb-md-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{% url 'mailing:index' %}">Главная</a>
+                    <a class="nav-link {% if request.get_full_path == '/' %} active {% endif %}"
+                       aria-current="page"
+                       href="{% url 'mailing:index' %}"
+                    >
+                        Главная
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'mailing:mailing_list' %}">Рассылки</a>
+                    <a class="nav-link {% if request.get_full_path == '/mailing_list/' %} active {% endif %}"
+                       href="{% url 'mailing:mailing_list' %}"
+                    >
+                        Рассылки
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'mailing:client_list' %}">Клиенты</a>
+                    <a class="nav-link {% if request.get_full_path == '/client_list/' %} active {% endif %}"
+                       href="{% url 'mailing:client_list' %}"
+                    >
+                        Клиенты
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'mailing:message_list' %}">Сообщения</a>
+                    <a class="nav-link {% if request.get_full_path == '/message_list/' %} active {% endif %}"
+                       href="{% url 'mailing:message_list' %}"
+                    >
+                        Сообщения
+                    </a>
                 </li>
+                {% if user|is_manager or user.is_superuser %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.get_full_path == '/users/user_list/' %} active {% endif %}"
+                           href="{% url 'users:user_list' %}"
+                        >
+                            Пользователи
+                        </a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>
-    <div class="action-right">
+    <div class="action-right navbar-nav">
         {% if user.is_authenticated %}
             <img src="{{ user.avatar|default:'users/loon-icon.svg'|url_media }}"
                  alt="user.name"

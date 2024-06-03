@@ -5,12 +5,20 @@ from users.forms import StyleFormMixin
 from mailing.models import Client, Mailing, Message
 
 
-class ProductForm(StyleFormMixin, forms.ModelForm):
+class ClientForm(StyleFormMixin, forms.ModelForm):
     """Форма добавления/изменения клиента"""
 
     class Meta:
         model = Client
         fields = ('email', 'name', 'comment',)
+
+
+class MailingForm(StyleFormMixin, forms.ModelForm):
+    """Форма добавления/изменения клиента"""
+
+    class Meta:
+        model = Mailing
+        fields = ('name', 'send_at', 'periodicity', 'send_to', 'message',)
 
 
 # class ProductModeratorForm(StyleFormMixin, forms.ModelForm):
@@ -21,13 +29,11 @@ class ProductForm(StyleFormMixin, forms.ModelForm):
 #         fields = ('is_published', 'description', 'category',)
 #
 #
-# class VersionForm(StyleFormMixin, forms.ModelForm):
-#     """Форма добавления/изменения версии продукта
-#     в данном случае номера гос. регистрации/окончания регистрации в РФ
-#     """
+# class MessageForm(StyleFormMixin, forms.ModelForm):
+#     """Форма добавления/изменения сообщения рассылки"""
 #
 #     class Meta:
-#         model = Version
+#         model = Message
 #         fields = '__all__'
 
     # def clean_is_current(self):

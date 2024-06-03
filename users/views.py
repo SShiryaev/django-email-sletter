@@ -1,12 +1,14 @@
 import random
 from secrets import token_hex
 
+from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import PasswordResetView
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, ListView
 
 from config.settings import EMAIL_HOST_USER
 from users.forms import UserRegisterForm, UserProfileForm
@@ -93,3 +95,32 @@ class UserPasswordResetView(PasswordResetView):
             )
             return HttpResponseRedirect(reverse('users:login'))
         return super().form_valid(form)
+
+
+class UsersListView(PermissionRequiredMixin, ListView):
+    """ Просмотр списка пользователей """
+
+    model = User
+    permission_required = "users.view_users"
+
+    def get_queryset(self, *args, **kwargs):
+        user = self.request.user
+        if user.is_superuser:
+            return super().get_queryset(*args, **kwargs).exclude(pk=self.request.user.pk).exclude(is_superuser=True)
+        return super().get_queryset(*args, **kwargs).exclude(pk=self.request.user.pk).exclude(
+            is_superuser=True).exclude(is_staff=True)
+
+
+@permission_required('users.block_user')
+def toggle_deactivate(request, pk):
+    """Контроллер блокировки пользователя"""
+
+    user = get_object_or_404(User, pk=pk)
+    if user.is_active:
+        user.is_active = False
+    else:
+        user.is_active = True
+
+    user.save()
+
+    return redirect(reverse('users:user_list'))

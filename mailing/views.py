@@ -1,11 +1,14 @@
+from django.forms import inlineformset_factory
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 
 from mailing.models import Mailing, Client, Message, MailingLog
+from mailing.forms import MailingForm
 
 
-class IndexView(TemplateView):
+class IndexView(TemplateView, LoginRequiredMixin):
     template_name = 'mailing/index.html'
     extra_context = {
         'title': 'Сервис рассылок - Главная'
@@ -18,8 +21,19 @@ class IndexView(TemplateView):
     #     return context_data
 
 
-class MailingListView(ListView):
+class MailingListView(LoginRequiredMixin, ListView):
+
+    login_url = "/users/login/"
+    redirect_field_name = "/users/login/"
+
     model = Mailing
+
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset(*args, **kwargs)
+        user = self.request.user
+        if not user.is_superuser and not user.groups.filter(name='manager').exists():
+            queryset = queryset.filter(owner=self.request.user)
+        return queryset
 
 
 class MailingCreateView(LoginRequiredMixin, CreateView):
@@ -28,12 +42,11 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
     redirect_field_name = "/users/login/"
 
     model = Mailing
-    fields = ('name', 'send_to', 'send_at', 'periodicity', 'status', 'message',)
+
+    form_class = MailingForm
     success_url = reverse_lazy('mailing:mailing_list')
 
     def form_valid(self, form):
-        # продукт присваивается создавшему его пользователю
-
         mailing = form.save()
         user = self.request.user
         mailing.owner = user
@@ -41,70 +54,126 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class MailingUpdateView(UpdateView):
+class MailingUpdateView(LoginRequiredMixin, UpdateView):
+
+    login_url = "/users/login/"
+    redirect_field_name = "/users/login/"
+
     model = Mailing
     fields = ('name', 'send_to', 'send_at', 'periodicity', 'status', 'message',)
     success_url = reverse_lazy('mailing:mailing_list')
 
 
-class MailingDetailView(DetailView):
+class MailingDetailView(LoginRequiredMixin, DetailView):
+
+    login_url = "/users/login/"
+    redirect_field_name = "/users/login/"
+
     model = Mailing
 
 
-class MailingDeleteView(DeleteView):
+class MailingDeleteView(LoginRequiredMixin, DeleteView):
+
+    login_url = "/users/login/"
+    redirect_field_name = "/users/login/"
+
     model = Mailing
     success_url = reverse_lazy('mailing:mailing_list')
 
 
-class ClientListView(ListView):
+class ClientListView(LoginRequiredMixin, ListView):
+
+    login_url = "/users/login/"
+    redirect_field_name = "/users/login/"
+
     model = Client
 
 
-class ClientCreateView(CreateView):
+class ClientCreateView(LoginRequiredMixin, CreateView):
+
+    login_url = "/users/login/"
+    redirect_field_name = "/users/login/"
+
     model = Client
     fields = ('name', 'email', 'comment',)
     success_url = reverse_lazy('mailing:client_list')
 
 
-class ClientUpdateView(UpdateView):
+class ClientUpdateView(LoginRequiredMixin, UpdateView):
+
+    login_url = "/users/login/"
+    redirect_field_name = "/users/login/"
+
     model = Client
     fields = ('name', 'email', 'comment',)
     success_url = reverse_lazy('mailing:client_list')
 
 
-class ClientDetailView(DetailView):
+class ClientDetailView(LoginRequiredMixin, DetailView):
+
+    login_url = "/users/login/"
+    redirect_field_name = "/users/login/"
+
     model = Client
 
 
-class ClientDeleteView(DeleteView):
+class ClientDeleteView(LoginRequiredMixin, DeleteView):
+
+    login_url = "/users/login/"
+    redirect_field_name = "/users/login/"
+
     model = Client
     success_url = reverse_lazy('mailing:client_list')
 
 
-class MessageListView(ListView):
+class MessageListView(LoginRequiredMixin, ListView):
+
+    login_url = "/users/login/"
+    redirect_field_name = "/users/login/"
+
     model = Message
 
 
-class MessageCreateView(CreateView):
+class MessageCreateView(LoginRequiredMixin, CreateView):
+
+    login_url = "/users/login/"
+    redirect_field_name = "/users/login/"
+
     model = Message
     fields = ('theme', 'body',)
     success_url = reverse_lazy('mailing:message_list')
 
 
-class MessageUpdateView(UpdateView):
+class MessageUpdateView(LoginRequiredMixin, UpdateView):
+
+    login_url = "/users/login/"
+    redirect_field_name = "/users/login/"
+
     model = Message
     fields = ('theme', 'body',)
     success_url = reverse_lazy('mailing:message_list')
 
 
-class MessageDetailView(DetailView):
+class MessageDetailView(LoginRequiredMixin, DetailView):
+
+    login_url = "/users/login/"
+    redirect_field_name = "/users/login/"
+
     model = Message
 
 
-class MessageDeleteView(DeleteView):
+class MessageDeleteView(LoginRequiredMixin, DeleteView):
+
+    login_url = "/users/login/"
+    redirect_field_name = "/users/login/"
+
     model = Message
     success_url = reverse_lazy('mailing:message_list')
 
 
-class MailingLogListView(ListView):
+class MailingLogListView(LoginRequiredMixin, ListView):
+
+    login_url = "/users/login/"
+    redirect_field_name = "/users/login/"
+
     model = MailingLog
