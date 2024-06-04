@@ -9,14 +9,14 @@
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                             {{ form.as_p }}
-                            <button type="submit" class="btn btn-success">
+                            <button type="submit" class="btn btn-outline-dark">
                                 {% if object %}
                                     Сохранить
                                 {% else %}
                                     Создать
                                 {% endif %}
                             </button>
-                            <a class="btn btn-danger" href="{% url 'mailing:client_list' %}">Отменить</a>
+                            <a class="btn btn-danger" href="{% url 'blog:list' %}">Отменить</a>
                         </form>
                     </div>
                 </div>

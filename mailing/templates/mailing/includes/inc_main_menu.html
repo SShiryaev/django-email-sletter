@@ -38,6 +38,13 @@
                         Сообщения
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.get_full_path == '/blog/' %} active {% endif %}"
+                       href="{% url 'blog:list' %}"
+                    >
+                        Блог
+                    </a>
+                </li>
                 {% if user|is_manager or user.is_superuser %}
                     <li class="nav-item">
                         <a class="nav-link {% if request.get_full_path == '/users/user_list/' %} active {% endif %}"
