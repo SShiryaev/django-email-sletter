@@ -10,38 +10,31 @@ class ClientForm(StyleFormMixin, forms.ModelForm):
 
     class Meta:
         model = Client
-        fields = ('email', 'name', 'comment',)
+        exclude = ('owner',)
 
 
 class MailingForm(StyleFormMixin, forms.ModelForm):
-    """Форма добавления/изменения клиента"""
+    """Форма добавления/изменения рассылки"""
 
     class Meta:
         model = Mailing
         fields = ('name', 'send_at', 'periodicity', 'send_to', 'message',)
 
 
-# class ProductModeratorForm(StyleFormMixin, forms.ModelForm):
-#     """Форма добавления/изменения продукта СЗР для модератора"""
-#
-#     class Meta:
-#         model = Product
-#         fields = ('is_published', 'description', 'category',)
-#
-#
-# class MessageForm(StyleFormMixin, forms.ModelForm):
-#     """Форма добавления/изменения сообщения рассылки"""
-#
-#     class Meta:
-#         model = Message
-#         fields = '__all__'
+class MailingManagerForm(StyleFormMixin, forms.ModelForm):
+    """Форма изменения рассылки менеджера"""
 
-    # def clean_is_current(self):
-    #     cleaned_data = self.cleaned_data.get('is_current')
-    #     current_version = Version.objects.filter(is_current=self.cleaned_data.get('is_current')).distinct()
-    #     if cleaned_data and current_version:
-    #         raise ValidationError('Актуальная версия может быть одна, снимите флаг с предыдущей')
-    #     return cleaned_data
+    class Meta:
+        model = Mailing
+        fields = ('status',)
+
+
+class MessageForm(StyleFormMixin, forms.ModelForm):
+    """Форма добавления/изменения сообщения рассылки"""
+
+    class Meta:
+        model = Message
+        exclude = ('owner',)
 
 
 # class FeedbackForm(StyleFormMixin, forms.ModelForm):

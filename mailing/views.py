@@ -1,11 +1,11 @@
 from django.forms import inlineformset_factory
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
 
 from mailing.models import Mailing, Client, Message, MailingLog
-from mailing.forms import MailingForm
+from mailing.forms import MailingForm, MailingManagerForm, ClientForm, MessageForm
 
 
 class IndexView(TemplateView, LoginRequiredMixin):
@@ -46,12 +46,26 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
     form_class = MailingForm
     success_url = reverse_lazy('mailing:mailing_list')
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        user = self.request.user
+        form.fields['send_to'].queryset = Client.objects.filter(owner=user)
+        form.fields['message'].queryset = Message.objects.filter(owner=user)
+        return form
+
     def form_valid(self, form):
         mailing = form.save()
         user = self.request.user
         mailing.owner = user
         mailing.save()
         return super().form_valid(form)
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        user = self.request.user
+        if not user.is_superuser and user != self.object.owner:
+            raise PermissionDenied
+        return self.object
 
 
 class MailingUpdateView(LoginRequiredMixin, UpdateView):
@@ -60,8 +74,24 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
     redirect_field_name = "/users/login/"
 
     model = Mailing
-    fields = ('name', 'send_to', 'send_at', 'periodicity', 'status', 'message',)
+    form_class = MailingForm
     success_url = reverse_lazy('mailing:mailing_list')
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        user = self.request.user
+        if user == self.object.owner or user.is_superuser:
+            form.fields['send_to'].queryset = Client.objects.filter(owner=user)
+            form.fields['message'].queryset = Message.objects.filter(owner=user)
+        return form
+
+    def get_form_class(self):
+        user = self.request.user
+        if user == self.object.owner:
+            return MailingForm
+        elif user.has_perm('mailing.set_activation_mailing'):
+            return MailingManagerForm
+        raise PermissionDenied
 
 
 class MailingDetailView(LoginRequiredMixin, DetailView):
@@ -80,6 +110,13 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
     model = Mailing
     success_url = reverse_lazy('mailing:mailing_list')
 
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        user = self.request.user
+        if user == self.object.owner:
+            return context_data
+        raise PermissionDenied
+
 
 class ClientListView(LoginRequiredMixin, ListView):
 
@@ -88,6 +125,10 @@ class ClientListView(LoginRequiredMixin, ListView):
 
     model = Client
 
+    def get_queryset(self):
+        user = self.request.user
+        return Client.objects.filter(owner=user)
+
 
 class ClientCreateView(LoginRequiredMixin, CreateView):
 
@@ -95,8 +136,15 @@ class ClientCreateView(LoginRequiredMixin, CreateView):
     redirect_field_name = "/users/login/"
 
     model = Client
-    fields = ('name', 'email', 'comment',)
+    form_class = ClientForm
     success_url = reverse_lazy('mailing:client_list')
+
+    def form_valid(self, form):
+        client = form.save()
+        user = self.request.user
+        client.owner = user
+        client.save()
+        return super().form_valid(form)
 
 
 class ClientUpdateView(LoginRequiredMixin, UpdateView):
@@ -105,8 +153,14 @@ class ClientUpdateView(LoginRequiredMixin, UpdateView):
     redirect_field_name = "/users/login/"
 
     model = Client
-    fields = ('name', 'email', 'comment',)
+    form_class = ClientForm
     success_url = reverse_lazy('mailing:client_list')
+
+    def get_form_class(self):
+        user = self.request.user
+        if user == self.object.owner:
+            return ClientForm
+        raise PermissionDenied
 
 
 class ClientDetailView(LoginRequiredMixin, DetailView):
@@ -125,6 +179,13 @@ class ClientDeleteView(LoginRequiredMixin, DeleteView):
     model = Client
     success_url = reverse_lazy('mailing:client_list')
 
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        user = self.request.user
+        if user == self.object.owner:
+            return context_data
+        raise PermissionDenied
+
 
 class MessageListView(LoginRequiredMixin, ListView):
 
@@ -133,6 +194,10 @@ class MessageListView(LoginRequiredMixin, ListView):
 
     model = Message
 
+    def get_queryset(self):
+        user = self.request.user
+        return Message.objects.filter(owner=user)
+
 
 class MessageCreateView(LoginRequiredMixin, CreateView):
 
@@ -140,8 +205,15 @@ class MessageCreateView(LoginRequiredMixin, CreateView):
     redirect_field_name = "/users/login/"
 
     model = Message
-    fields = ('theme', 'body',)
+    form_class = MessageForm
     success_url = reverse_lazy('mailing:message_list')
+
+    def form_valid(self, form):
+        message = form.save()
+        user = self.request.user
+        message.owner = user
+        message.save()
+        return super().form_valid(form)
 
 
 class MessageUpdateView(LoginRequiredMixin, UpdateView):
@@ -152,6 +224,12 @@ class MessageUpdateView(LoginRequiredMixin, UpdateView):
     model = Message
     fields = ('theme', 'body',)
     success_url = reverse_lazy('mailing:message_list')
+
+    def get_form_class(self):
+        user = self.request.user
+        if user == self.object.owner:
+            return MessageForm
+        raise PermissionDenied
 
 
 class MessageDetailView(LoginRequiredMixin, DetailView):
@@ -169,6 +247,13 @@ class MessageDeleteView(LoginRequiredMixin, DeleteView):
 
     model = Message
     success_url = reverse_lazy('mailing:message_list')
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        user = self.request.user
+        if user == self.object.owner:
+            return context_data
+        raise PermissionDenied
 
 
 class MailingLogListView(LoginRequiredMixin, ListView):

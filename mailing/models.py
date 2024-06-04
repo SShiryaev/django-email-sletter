@@ -55,17 +55,6 @@ class Mailing(models.Model):
         CREATED = "Создана", _("Создана")
         LAUNCHED = "Запущена", _("Запущена")
         FINISHED = "Завершена", _("Завершена")
-    # PERIODICITY_MAILING = [
-    #     ('once_day', 'раз в день'),
-    #     ('once_week', 'раз в неделю'),
-    #     ('once_month', 'раз в месяц'),
-    # ]
-    #
-    # STATUS_MAILING = [
-    #     ('created', 'создана'),
-    #     ('launched', 'запущена'),
-    #     ('completed', 'завершена')
-    # ]
 
     name = models.CharField(max_length=50, verbose_name='название')
     send_at = models.DateTimeField(**NULLABLE, verbose_name='первая отправка')
@@ -82,6 +71,9 @@ class Mailing(models.Model):
     class Meta:
         verbose_name = 'рассылка'
         verbose_name_plural = 'рассылки'
+        permissions = [
+            ("set_activation_mailing", "Can deactivate a mailing"),
+        ]
 
 
 class MailingLog(models.Model):
