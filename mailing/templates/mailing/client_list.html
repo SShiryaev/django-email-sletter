@@ -1,12 +1,16 @@
 {% extends 'mailing/base.html' %}
 
+{% load custom_tags %}
+
 {% block content %}
     <div class="album py-5 bg-dark">
         <div class="container">
             <div class="container mt-4">
                 <div class="row">
                     <div class="col-12 mb-5">
-                        <a href="{% url 'mailing:client_create' %}" class="btn btn-outline-light">Добавить клиента</a>
+                        {% if not user|is_manager %}
+                            <a href="{% url 'mailing:client_create' %}" class="btn btn-outline-light">Добавить клиента</a>
+                        {% endif %}
                     </div>
                     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
                         {% for object in object_list %}

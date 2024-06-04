@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand
 from django_apscheduler.jobstores import DjangoJobStore
 from django_apscheduler.models import DjangoJobExecution
 from django_apscheduler import util
-from mailing.services import send_mail
+from mailing.services import send_mailing
 
 logger = logging.getLogger(__name__)
 
@@ -37,27 +37,25 @@ class Command(BaseCommand):
         scheduler.add_jobstore(DjangoJobStore(), "default")
 
         scheduler.add_job(
-            send_mail,
-            trigger=CronTrigger(minute="*"),  # Every minute
-            id="send_mailing",  # The `id` assigned to each job MUST be unique
-            max_instances=1,
-            replace_existing=True,
+          send_mailing,
+          trigger=CronTrigger(minute='*'),  # Every minute
+          id="send_mailing",  # The `id` assigned to each job MUST be unique
+          max_instances=1,
+          replace_existing=True,
         )
-        print('проверил нужно ли отправлять')
-        logger.info("Added job 'send_mailing'.")
+        logger.info("Added job 'my_job'.")
 
         scheduler.add_job(
-            delete_old_job_executions,
-            trigger=CronTrigger(
-                day_of_week="mon", hour="00", minute="00"
-            ),  # Midnight on Monday, before start of the next work week.
-            id="delete_old_job_executions",
-            max_instances=1,
-            replace_existing=True,
+          delete_old_job_executions,
+          trigger=CronTrigger(
+            day_of_week="mon", hour="00", minute="00"
+          ),  # Midnight on Monday, before start of the next work week.
+          id="delete_old_job_executions",
+          max_instances=1,
+          replace_existing=True,
         )
-        print('удалил предыдущую задачу')
         logger.info(
-            "Added weekly job: 'delete_old_job_executions'."
+          "Added weekly job: 'delete_old_job_executions'."
         )
 
         try:
