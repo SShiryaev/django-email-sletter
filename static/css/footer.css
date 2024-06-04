@@ -1,0 +1,27 @@
+.footer {
+    width:50px;
+    height:50px;
+    border: #d41542 8px dashed;
+    margin:-3 auto;
+    position:center;
+
+}
+.footer hover{
+    width:50px;
+    height:50px;
+    border: #d41542 8px dashed;
+}
+.footer {
+    position: fixed;
+    right:0;
+    bottom:0;
+    width: 99%;
+    height: 2em;
+    overflow:hidden;
+    transition: all 2s ease;
+
+}
+.footer:hover {
+    transition: all 2s ease;
+    height: 9em;
+}

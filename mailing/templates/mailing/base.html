@@ -1,0 +1,48 @@
+<!doctype html>
+
+{% load static %}
+
+<html lang="en" data-bs-theme="auto">
+<head>
+    <script src="{% static 'js/color-modes.js' %}"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{{ title }}</title>
+
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/footer.css' %}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/carousel.css' %}" rel="stylesheet">
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" href="/docs/5.3/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
+    <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
+<!--    <link rel="manifest" href="/docs/5.3/assets/img/favicons/manifest.json">-->
+    <link rel="mask-icon" href="/docs/5.3/assets/img/favicons/safari-pinned-tab.svg" color="#712cf9">
+    <link rel="icon" href="/docs/5.3/assets/img/favicons/favicon.ico">
+    <meta name="theme-color" content="#712cf9">
+
+</head>
+<body class="page bg-dark">
+
+<header class="page-header fixed-top"  data-bs-theme="dark">
+
+    {% include 'mailing/includes/inc_main_menu.html' %}
+
+</header>
+
+<main class="page-main">
+    <div class="marketing">
+            {% block content %}
+            {% endblock %}
+    </div>
+</main>
+<footer class="page-footer container">
+    <p class="float-end"><a href="#" class="text-white">Наверх</a></p>
+    <p class="col-3 mb-1 text-white">&copy; {% now 'Y' %}</p>
+</footer>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

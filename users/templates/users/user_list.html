@@ -1,0 +1,44 @@
+{% extends 'mailing/base.html' %}
+
+{% load custom_tags %}
+
+{% block content %}
+    <div class="album py-5 bg-dark">
+        <div class="container">
+            <div class="container mt-4">
+                <div class="row">
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                        {% for object in object_list %}
+                            <div class="col mb-4 mt-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-body">
+                                        <p class="card-text">Email: {{ object.email }}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="btn-group">
+                                                {% if user|is_manager or user.is_superuser %}
+                                                    {% if object.is_active %}
+                                                        <a class="btn btn-outline-warning"
+                                                           href="{% url 'users:toggle_deactivate' object.pk %}"
+                                                        >
+                                                            Заблокировать
+                                                        </a>
+                                                    {% else %}
+                                                        <a class="btn btn-outline-success"
+                                                           href="{% url 'users:toggle_deactivate' object.pk %}"
+                                                        >
+                                                            Разблокировать
+                                                        </a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
