@@ -1,10 +1,11 @@
-from django.forms import inlineformset_factory
+import random
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 
 from mailing.models import Mailing, Client, Message, MailingLog
+from blog.models import Material
 from mailing.forms import MailingForm, MailingManagerForm, ClientForm, MessageForm
 
 
@@ -14,11 +15,18 @@ class IndexView(TemplateView, LoginRequiredMixin):
         'title': 'Сервис рассылок - Главная'
     }
 
-    # def get_context_data(self, **kwargs):
-    #     context_data = super().get_context_data(**kwargs)
-    #     context_data['object_list'] = Breed.objects.all()[:3]
-    #     context_data['title'] = 'Сервис рассылок - Главная'
-    #     return context_data
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        mailing = Mailing.objects.all()
+        clients = Client.objects.all()
+        context['count_mailing'] = mailing.count()
+        context['is_active_mailing'] = mailing.filter(status=Mailing.Status.LAUNCHED).count()
+        context['unique_clients'] = clients.values('email').distinct().count()
+        context['blogs'] = Material.objects.all()
+        context['blog_list'] = list(context['blogs'])
+        random.shuffle(context['blog_list'])
+        context['shuffled_blog_list'] = context['blog_list'][:3]
+        return context
 
 
 class MailingListView(LoginRequiredMixin, ListView):

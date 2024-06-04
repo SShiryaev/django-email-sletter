@@ -15,7 +15,8 @@
                 <div class="container">
                     <div class="carousel-caption text-start">
                         <h1>Менеджер рассылок</h1>
-                        <p class="opacity-100">Вы можете создать, посмотреть список, отредактировать, удалить рассылку.</p>
+                        <p class="opacity-100">Количество рассылок всего: {{ count_mailing }}</p>
+                        <p class="opacity-100">Количество активных рассылок: {{ is_active_mailing }}</p>
                         <p><a class="btn btn-lg btn-outline-light" href="{% url 'mailing:mailing_list' %}">К рассылкам</a></p>
                     </div>
                 </div>
@@ -26,7 +27,7 @@
                 <div class="container">
                     <div class="carousel-caption text-dark">
                         <h1>Список клиентов</h1>
-                        <p class="opacity-100">Вы можете создать, посмотреть список, отредактировать, удалить клиента.</p>
+                        <p class="opacity-100">Количество уникальных клиентов для рассылок: {{ unique_clients }}</p>
                         <p><a class="btn btn-lg btn-outline-dark" href="{% url 'mailing:client_list' %}">К клиентам</a></p>
                     </div>
                 </div>
@@ -36,11 +37,14 @@
                      alt="Card image cap">
                 <div class="container">
                     <div class="carousel-caption text-end text-start">
-                        <h1>Сообщения для рассылок</h1>
-                        <p>Вы можете создать, посмотреть список, отредактировать, удалить сообщения для рассылок.</p>
-                        <p><a class="btn btn-lg btn-outline-light" href="{% url 'mailing:message_list' %}"
+                        <h1>Блог.</h1>
+                        <p>Вы можете познакомиться со статьями блога:</p>
+                        {% for blog in shuffled_blog_list %}
+                            <p>{{blog.title}}<p>
+                        {% endfor %}
+                        <p><a class="btn btn-lg btn-outline-light" href="{% url 'blog:list' %}"
                         >
-                            К сообщениям
+                            К списку статей
                         </a></p>
                     </div>
                 </div>
